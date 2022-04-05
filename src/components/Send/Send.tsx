@@ -21,11 +21,17 @@ interface Props {
   address: string
   provider: Web3Provider | null
   jsonRpcProvider: JsonRpcProvider | null
+  signer: ethers.providers.JsonRpcSigner | null
 }
 
-const Send: React.FC<Props> = ({ address, provider, jsonRpcProvider }) => {
+const Send: React.FC<Props> = ({
+  address,
+  provider,
+  signer,
+  jsonRpcProvider,
+}) => {
   const [balance, setBalance] = useState<number>(0.0)
-  const [refreshing, setRefreshing] = useState(false)
+  const [loading, setLoading] = useState(false)
   const theme = useMantineTheme()
 
   const sendSchema = yup.object().shape({
@@ -58,17 +64,21 @@ const Send: React.FC<Props> = ({ address, provider, jsonRpcProvider }) => {
 
   async function handleSend(values: any) {
     console.log(values)
+    if (signer) {
+      const tx = signer.sendTransaction({
+        to: values.address,
+        value: ethers.utils.parseEther(values.amount),
+      })
+    }
   }
 
   async function getBal() {
-    // setRefreshing(true)
     const bal = await jsonRpcProvider?.getBalance(address)
     if (bal) {
       const balSplit = ethers.utils.formatUnits(bal, 18).split(".")
       balSplit[1] = balSplit[1].substring(0, 10)
 
       setBalance(parseFloat(balSplit.join(".")))
-      // setRefreshing(false)
     }
   }
 
@@ -80,7 +90,7 @@ const Send: React.FC<Props> = ({ address, provider, jsonRpcProvider }) => {
           {address !== "" ? address : "awaiting connection"}
         </Badge>
 
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form onSubmit={form.onSubmit((values) => handleSend(values))}>
           <TextInput
             mt="md"
             type="number"

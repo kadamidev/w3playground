@@ -30,6 +30,9 @@ function App() {
   )
   const [jsonRpcProvider, setJsonRpcProvider] =
     useState<JsonRpcProvider | null>(null)
+  const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner | null>(
+    null
+  )
 
   const [address, setAddress] = useState<string>("")
   const [darkMode, setDarkMode] = useState<ColorScheme>("dark")
@@ -38,8 +41,10 @@ function App() {
   async function connectWallet() {
     if (typeof window.ethereum !== "undefined") {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
       const jsonRpcProvider = new ethers.providers.JsonRpcProvider()
       setEthersProvider(provider)
+      setSigner(signer)
       setJsonRpcProvider(jsonRpcProvider)
 
       const addresses = await provider.send("eth_requestAccounts", [])
@@ -107,6 +112,7 @@ function App() {
             address={address}
             provider={ethersProvider}
             jsonRpcProvider={jsonRpcProvider}
+            signer={signer}
           />
         )
     }
