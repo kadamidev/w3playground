@@ -1,0 +1,16 @@
+.navItems > button {
+  width: 100%;
+  text-align: start;
+  padding: 0px 10px;
+  margin: 0;
+  display: flex;
+  font-weight: bold;
+}
+
+.icons {
+  margin-right: 15px;
+}
+
+.navBarContainer {
+  display: flex;
+}
