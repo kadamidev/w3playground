@@ -4,18 +4,21 @@ import {
   Badge,
   Paper,
   Title,
-  ActionIcon,
   useMantineTheme,
   TextInput,
   Group,
   Button,
+  Loader,
+  Box,
 } from "@mantine/core"
 import { useForm, yupResolver } from "@mantine/form"
 import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
 import { ethers } from "ethers"
-
-import { FiRefreshCw } from "react-icons/fi"
 import * as yup from "yup"
+import "./Send.css"
+import { FaCheck } from "react-icons/fa"
+import { IoMdClose } from "react-icons/io"
+import { showNotification } from "@mantine/notifications"
 
 interface Props {
   address: string
@@ -33,6 +36,7 @@ const Send: React.FC<Props> = ({
   const [balance, setBalance] = useState<number>(0.0)
   const [loading, setLoading] = useState(false)
   const theme = useMantineTheme()
+  const [feedback, setFeedback] = useState<string>("")
 
   const sendSchema = yup.object().shape({
     amount: yup
@@ -62,13 +66,31 @@ const Send: React.FC<Props> = ({
     getBal()
   }, [address])
 
-  async function handleSend(values: any) {
-    console.log(values)
+  async function handleSend(values: { amount: string; address: string }) {
+    setLoading(true)
     if (signer) {
-      const tx = signer.sendTransaction({
-        to: values.address,
-        value: ethers.utils.parseEther(values.amount),
-      })
+      try {
+        const tx = await signer.sendTransaction({
+          to: values.address,
+          value: ethers.utils.parseEther(values.amount),
+        })
+        setFeedback("success")
+        showNotification({
+          title: "Successfully Sent",
+          message: `${values.amount} ETH to ${values.address}`,
+          color: "sandboxGreen",
+          icon: <FaCheck />,
+        })
+      } catch (e: any) {
+        setFeedback("failed")
+        setLoading(false)
+        showNotification({
+          title: "Failed sending",
+          message: `${e.message}`,
+          color: "red",
+          icon: <IoMdClose />,
+        })
+      }
     }
   }
 
@@ -89,7 +111,6 @@ const Send: React.FC<Props> = ({
         <Badge mt="md" color={address !== "" ? "" : "orange"}>
           {address !== "" ? address : "awaiting connection"}
         </Badge>
-
         <form onSubmit={form.onSubmit((values) => handleSend(values))}>
           <TextInput
             mt="md"
@@ -104,8 +125,13 @@ const Send: React.FC<Props> = ({
             placeholder="0x..."
             {...form.getInputProps("address")}
           />
-          <Group position="right" mt="md">
-            <Button type="submit" variant="outline">
+          <Group position="apart" mt="md">
+            <Box>
+              {loading && <Loader className="loader" />}
+              {/* {feedback && <Text>{feedback}</Text>} */}
+            </Box>
+
+            <Button type="submit" variant="outline" disabled={loading}>
               Send
             </Button>
           </Group>

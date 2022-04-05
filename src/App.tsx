@@ -94,6 +94,7 @@ function App() {
       ],
     },
     primaryColor: "sandboxGreen",
+    loader: "bars",
   }
 
   function renderApplet() {
