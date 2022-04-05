@@ -28,10 +28,16 @@ const SideNav: React.FC<Props> = ({
   activeApplet,
   setActiveApplet,
   opened,
+  setOpened,
   darkMode,
   setDarkMode,
 }) => {
   const theme = useMantineTheme()
+
+  function handleAppletSwitch(applet: Applets) {
+    setActiveApplet(applet)
+    setOpened(false)
+  }
 
   return (
     <div>
@@ -53,7 +59,7 @@ const SideNav: React.FC<Props> = ({
           <Button
             variant="subtle"
             size="xl"
-            onClick={() => setActiveApplet(Applets.OVERVIEW)}
+            onClick={() => handleAppletSwitch(Applets.OVERVIEW)}
           >
             <ThemeIcon
               size="lg"
@@ -69,7 +75,7 @@ const SideNav: React.FC<Props> = ({
             variant="subtle"
             color={theme.primaryColor}
             size="xl"
-            onClick={() => setActiveApplet(Applets.SEND)}
+            onClick={() => handleAppletSwitch(Applets.SEND)}
           >
             <ThemeIcon
               size="lg"
