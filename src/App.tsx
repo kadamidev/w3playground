@@ -5,8 +5,6 @@ import {
   MantineThemeOverride,
   MantineProvider,
   ColorScheme,
-  Notification,
-  Navbar,
 } from "@mantine/core"
 import { NotificationsProvider, showNotification } from "@mantine/notifications"
 import { ethers } from "ethers"
@@ -85,8 +83,8 @@ function App() {
         "#A6A7AA",
         "#909296",
         "#5C5F65",
-        "#3F6F4C",
-        "#254F31",
+        "#3A6331",
+        "#224E18",
         "#202320",
         "#1A1D19",
         "#08200F",
@@ -143,9 +141,7 @@ function App() {
     >
       <NotificationsProvider>
         <AppShell
-          // navbarOffsetBreakpoint controls when navbar should no longer be offset with padding-left
           navbarOffsetBreakpoint="sm"
-          // fixed prop on AppShell will be automatically added to Header and Navbar
           fixed
           navbar={
             <SideNav
@@ -166,11 +162,6 @@ function App() {
             />
           }
         >
-          {/* <Overview
-            address={address}
-            provider={ethersProvider}
-            jsonRpcProvider={jsonRpcProvider}
-          /> */}
           {renderApplet()}
         </AppShell>
       </NotificationsProvider>

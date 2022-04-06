@@ -41,6 +41,11 @@ const Send: React.FC<Props> = ({
   const theme = useMantineTheme()
   const [feedback, setFeedback] = useState<string>("")
   const [lastHashes, setLastHashes] = useState<{ hash: string }[]>([])
+  const [opened, setOpened] = useState(false)
+
+  useEffect(() => {
+    setOpened(true)
+  }, [])
 
   const sendSchema = yup.object().shape({
     amount: yup
@@ -117,94 +122,107 @@ const Send: React.FC<Props> = ({
   ))
 
   return (
-    <div className="container">
-      <Paper
-        shadow="sm"
-        p="xl"
-        withBorder
-        sx={(theme) => ({
-          position: "relative",
-          [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
-            maxWidth: "600px",
-          },
-        })}
-      >
-        <Title order={2}>Send</Title>
-        <Badge mt="md" color={address !== "" ? "" : "orange"}>
-          {address !== "" ? address : "awaiting connection"}
-        </Badge>
-        <form onSubmit={form.onSubmit((values) => handleSend(values))}>
-          <TextInput
-            mt="md"
-            type="number"
-            required
-            label="Amount"
-            {...form.getInputProps("amount")}
-          />
-          <TextInput
-            required
-            label="Address"
-            placeholder="0x..."
-            {...form.getInputProps("address")}
-          />
-          <Group position="apart" mt="md">
-            <Box>
-              {loading && <Loader className="loader" />}
-              {/* {feedback && <Text>{feedback}</Text>} */}
-            </Box>
+    <Transition
+      mounted={opened}
+      transition="slide-right"
+      duration={300}
+      timingFunction="ease"
+    >
+      {(styles) => (
+        <div className="container" style={styles}>
+          <Paper
+            shadow="sm"
+            p="xl"
+            withBorder
+            sx={(theme) => ({
+              position: "relative",
+              [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+                maxWidth: "600px",
+              },
+            })}
+          >
+            <Title order={2}>Send</Title>
+            <Badge mt="md" color={address !== "" ? "" : "orange"}>
+              {address !== "" ? address : "awaiting connection"}
+            </Badge>
+            <form onSubmit={form.onSubmit((values) => handleSend(values))}>
+              <TextInput
+                mt="md"
+                type="number"
+                required
+                label="Amount"
+                {...form.getInputProps("amount")}
+              />
+              <TextInput
+                required
+                label="Address"
+                placeholder="0x..."
+                {...form.getInputProps("address")}
+              />
+              <Group position="apart" mt="md">
+                <Box>
+                  {loading && <Loader className="loader" />}
+                  {/* {feedback && <Text>{feedback}</Text>} */}
+                </Box>
 
-            <Button mb="xs" type="submit" variant="outline" disabled={loading}>
-              Send
-            </Button>
-          </Group>
-        </form>
-
-        {/* {lastHashes.length > 0 && ( */}
-        <Transition
-          mounted={lastHashes.length > 0}
-          transition="slide-up"
-          duration={400}
-          timingFunction="ease"
-        >
-          {(styles) => (
-            <Accordion
-              style={styles}
-              iconPosition="right"
-              iconSize={40}
-              sx={
-                lastHashes.length > 0
-                  ? {}
-                  : { height: "40px", overflow: "hidden" }
-              }
-            >
-              <Accordion.Item label="Last Hashes">
-                <Table
-                  mt="md"
-                  verticalSpacing="sm"
-                  fontSize="xs"
-                  striped
-                  highlightOnHover
-                  sx={(theme) => ({
-                    backgroundColor:
-                      theme.colorScheme === "dark" ? theme.colors.dark[7] : "",
-                    "&:hover": {
-                      // backgroundColor: theme.colors.gray[1],
-                    },
-                  })}
+                <Button
+                  mb="xs"
+                  type="submit"
+                  variant="outline"
+                  disabled={loading}
                 >
-                  <thead>
-                    <tr>
-                      <th>TX Hash</th>
-                    </tr>
-                  </thead>
-                  <tbody>{rows}</tbody>
-                </Table>
-              </Accordion.Item>
-            </Accordion>
-          )}
-        </Transition>
-      </Paper>
-    </div>
+                  Send
+                </Button>
+              </Group>
+            </form>
+
+            {/* {lastHashes.length > 0 && ( */}
+            <Transition
+              mounted={lastHashes.length > 0}
+              transition="slide-up"
+              duration={400}
+              timingFunction="ease"
+            >
+              {(styles) => (
+                <Accordion
+                  style={styles}
+                  iconPosition="right"
+                  iconSize={40}
+                  sx={
+                    lastHashes.length > 0
+                      ? {}
+                      : { height: "40px", overflow: "hidden" }
+                  }
+                >
+                  <Accordion.Item label="Last Hashes">
+                    <Table
+                      mt="md"
+                      verticalSpacing="sm"
+                      fontSize="xs"
+                      striped
+                      highlightOnHover
+                      sx={(theme) => ({
+                        backgroundColor:
+                          theme.colorScheme === "dark"
+                            ? theme.colors.dark[7]
+                            : "",
+                      })}
+                    >
+                      <thead>
+                        <tr>
+                          <th>TX Hash</th>
+                        </tr>
+                      </thead>
+                      <tbody>{rows}</tbody>
+                    </Table>
+                  </Accordion.Item>
+                </Accordion>
+              )}
+            </Transition>
+          </Paper>
+        </div>
+      )}
+    </Transition>
   )
 }
 
