@@ -22,6 +22,7 @@ import "./Send.css"
 import { FaCheck } from "react-icons/fa"
 import { IoMdClose } from "react-icons/io"
 import { showNotification } from "@mantine/notifications"
+import { useClipboard } from "@mantine/hooks"
 
 interface Props {
   address: string
@@ -46,6 +47,8 @@ const Send: React.FC<Props> = ({
   useEffect(() => {
     setOpened(true)
   }, [])
+
+  const clipboard = useClipboard({ timeout: 500 })
 
   const sendSchema = yup.object().shape({
     amount: yup
@@ -142,7 +145,28 @@ const Send: React.FC<Props> = ({
             })}
           >
             <Title order={2}>Send</Title>
-            <Badge mt="md" color={address !== "" ? "" : "orange"}>
+            <Badge
+              mt="md"
+              color={address !== "" ? "" : "orange"}
+              sx={
+                clipboard.copied
+                  ? {
+                      color: "transparent",
+                      "&:before": {
+                        content: `"Copied"`,
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.colors.sandboxGreen[2]
+                            : theme.colors.sandboxGreen[6],
+                        position: "absolute",
+                      },
+                    }
+                  : {}
+              }
+              onClick={() => {
+                if (address !== "") clipboard.copy(address)
+              }}
+            >
               {address !== "" ? address : "awaiting connection"}
             </Badge>
             <form onSubmit={form.onSubmit((values) => handleSend(values))}>

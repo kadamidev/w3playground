@@ -7,10 +7,13 @@ import {
   ActionIcon,
   useMantineTheme,
   Transition,
+  ColorInput,
 } from "@mantine/core"
 import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
 import { ethers } from "ethers"
 import { FiRefreshCw } from "react-icons/fi"
+import { useClipboard } from "@mantine/hooks"
+import { showNotification } from "@mantine/notifications"
 
 interface Props {
   address: string
@@ -32,6 +35,8 @@ const Overview: React.FC<Props> = ({ address, provider, jsonRpcProvider }) => {
   useEffect(() => {
     getBal()
   }, [address])
+
+  const clipboard = useClipboard({ timeout: 500 })
 
   async function getBal() {
     setRefreshing(true)
@@ -66,7 +71,28 @@ const Overview: React.FC<Props> = ({ address, provider, jsonRpcProvider }) => {
             })}
           >
             <Title order={2}>Overview</Title>
-            <Badge mt="md" color={address !== "" ? "" : "orange"}>
+            <Badge
+              mt="md"
+              color={address !== "" ? "" : "orange"}
+              sx={
+                clipboard.copied
+                  ? {
+                      color: "transparent",
+                      "&:before": {
+                        content: `"Copied"`,
+                        color:
+                          theme.colorScheme === "dark"
+                            ? theme.colors.sandboxGreen[2]
+                            : theme.colors.sandboxGreen[6],
+                        position: "absolute",
+                      },
+                    }
+                  : {}
+              }
+              onClick={() => {
+                if (address !== "") clipboard.copy(address)
+              }}
+            >
               {address !== "" ? address : "awaiting connection"}
             </Badge>
             <Text size="lg" mt="xs">
