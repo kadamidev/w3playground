@@ -10,6 +10,9 @@ import {
   Button,
   Loader,
   Box,
+  Table,
+  Accordion,
+  Transition,
 } from "@mantine/core"
 import { useForm, yupResolver } from "@mantine/form"
 import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
@@ -37,6 +40,7 @@ const Send: React.FC<Props> = ({
   const [loading, setLoading] = useState(false)
   const theme = useMantineTheme()
   const [feedback, setFeedback] = useState<string>("")
+  const [lastHashes, setLastHashes] = useState<{ hash: string }[]>([])
 
   const sendSchema = yup.object().shape({
     amount: yup
@@ -74,6 +78,8 @@ const Send: React.FC<Props> = ({
           to: values.address,
           value: ethers.utils.parseEther(values.amount),
         })
+        setLoading(false)
+        setLastHashes([...lastHashes, { hash: tx.hash }])
         setFeedback("success")
         showNotification({
           title: "Successfully Sent",
@@ -104,9 +110,25 @@ const Send: React.FC<Props> = ({
     }
   }
 
+  const rows = lastHashes.map((element) => (
+    <tr key={element.hash}>
+      <td>{element.hash}</td>
+    </tr>
+  ))
+
   return (
-    <div>
-      <Paper shadow="sm" p="xl" withBorder sx={{ position: "relative" }}>
+    <div className="container">
+      <Paper
+        shadow="sm"
+        p="xl"
+        withBorder
+        sx={(theme) => ({
+          position: "relative",
+          [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+            maxWidth: "600px",
+          },
+        })}
+      >
         <Title order={2}>Send</Title>
         <Badge mt="md" color={address !== "" ? "" : "orange"}>
           {address !== "" ? address : "awaiting connection"}
@@ -131,11 +153,56 @@ const Send: React.FC<Props> = ({
               {/* {feedback && <Text>{feedback}</Text>} */}
             </Box>
 
-            <Button type="submit" variant="outline" disabled={loading}>
+            <Button mb="xs" type="submit" variant="outline" disabled={loading}>
               Send
             </Button>
           </Group>
         </form>
+
+        {/* {lastHashes.length > 0 && ( */}
+        <Transition
+          mounted={lastHashes.length > 0}
+          transition="slide-up"
+          duration={400}
+          timingFunction="ease"
+        >
+          {(styles) => (
+            <Accordion
+              style={styles}
+              iconPosition="right"
+              iconSize={40}
+              sx={
+                lastHashes.length > 0
+                  ? {}
+                  : { height: "40px", overflow: "hidden" }
+              }
+            >
+              <Accordion.Item label="Last Hashes">
+                <Table
+                  mt="md"
+                  verticalSpacing="sm"
+                  fontSize="xs"
+                  striped
+                  highlightOnHover
+                  sx={(theme) => ({
+                    backgroundColor:
+                      theme.colorScheme === "dark" ? theme.colors.dark[7] : "",
+                    "&:hover": {
+                      // backgroundColor: theme.colors.gray[1],
+                    },
+                  })}
+                >
+                  <thead>
+                    <tr>
+                      <th>TX Hash</th>
+                    </tr>
+                  </thead>
+                  <tbody>{rows}</tbody>
+                </Table>
+              </Accordion.Item>
+            </Accordion>
+          )}
+        </Transition>
       </Paper>
     </div>
   )
