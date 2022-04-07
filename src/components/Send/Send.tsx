@@ -185,7 +185,7 @@ const Send: React.FC<Props> = ({
               />
               <Group position="apart" mt="md">
                 <Box>
-                  {loading && <Loader className="loader" />}
+                  {loading && <Loader size="lg" className="loader" />}
                   {/* {feedback && <Text>{feedback}</Text>} */}
                 </Box>
 

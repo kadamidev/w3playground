@@ -13,7 +13,6 @@ import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
 import { ethers } from "ethers"
 import { FiRefreshCw } from "react-icons/fi"
 import { useClipboard } from "@mantine/hooks"
-import { showNotification } from "@mantine/notifications"
 
 interface Props {
   address: string
