@@ -15,10 +15,12 @@ import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
 import { GiFox } from "react-icons/gi"
 import { FaCheck } from "react-icons/fa"
 import Send from "./components/Send/Send"
+import MintNFT from "./components/MintNFT/MintNFT"
 
 export enum Applets {
   OVERVIEW,
   SEND,
+  MINT_NFT,
 }
 
 function App() {
@@ -108,6 +110,15 @@ function App() {
       case Applets.SEND:
         return (
           <Send
+            address={address}
+            provider={ethersProvider}
+            jsonRpcProvider={jsonRpcProvider}
+            signer={signer}
+          />
+        )
+      case Applets.MINT_NFT:
+        return (
+          <MintNFT
             address={address}
             provider={ethersProvider}
             jsonRpcProvider={jsonRpcProvider}

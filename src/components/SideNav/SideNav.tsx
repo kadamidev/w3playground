@@ -14,6 +14,7 @@ import { WiSunrise } from "react-icons/wi"
 import { BsMoonStars } from "react-icons/bs"
 import "./SideNav.css"
 import { Applets } from "../../App"
+import { GiFairyWand } from "react-icons/gi"
 
 interface Props {
   opened: boolean
@@ -86,6 +87,22 @@ const SideNav: React.FC<Props> = ({
               <MdSend />
             </ThemeIcon>
             Send
+          </Button>
+          <Button
+            variant="subtle"
+            color={theme.primaryColor}
+            size="xl"
+            onClick={() => handleAppletSwitch(Applets.MINT_NFT)}
+          >
+            <ThemeIcon
+              size="lg"
+              variant="gradient"
+              gradient={{ from: "sandboxGreen", to: "lime" }}
+              className="icons"
+            >
+              <GiFairyWand />
+            </ThemeIcon>
+            Mint NFT
           </Button>
         </div>
         <div className="navBottom">
