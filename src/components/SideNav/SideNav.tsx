@@ -96,19 +96,32 @@ const SideNav: React.FC<Props> = ({
             onClick={() => handleAppletSwitch(Applets.MINT_NFT)}
             disabled
             className="btnDisable"
-            // sx={{ ":disabled": { backgroundColor: "green" } }}
+            sx={{
+              ":disabled": {
+                backgroundColor: "transparent !important",
+                color:
+                  theme.colorScheme === "dark"
+                    ? `${theme.colors.dark[3]} !important`
+                    : "",
+              },
+            }}
           >
             <ThemeIcon
               size="lg"
               variant="gradient"
-              gradient={{ from: "sandboxGreen", to: "lime" }}
+              gradient={{
+                from: theme.colors.sandboxGreen[2],
+                to: theme.colors.sandboxGreen[4],
+              }}
+              // gradient={{ from: "sandboxGreen", to: "lime" }}
+
               className="icons"
             >
               <GiFairyWand />
             </ThemeIcon>
             Mint NFT
             <Badge
-              ml="5px"
+              ml="6px"
               variant="gradient"
               gradient={{ from: "#ed6ea0", to: "#ec8c69", deg: 35 }}
               radius="xs"

@@ -14,7 +14,3 @@
 .navBarContainer {
   display: flex;
 }
-
-.btnDisable:disabled {
-  background-color: transparent !important;
-}
