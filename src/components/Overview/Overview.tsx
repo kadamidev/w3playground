@@ -17,10 +17,9 @@ import { useClipboard } from "@mantine/hooks"
 interface Props {
   address: string
   provider: Web3Provider | null
-  jsonRpcProvider: JsonRpcProvider | null
 }
 
-const Overview: React.FC<Props> = ({ address, provider, jsonRpcProvider }) => {
+const Overview: React.FC<Props> = ({ address, provider }) => {
   const [balance, setBalance] = useState("0.0")
   const [refreshing, setRefreshing] = useState(false)
   const [opened, setOpened] = useState(false)
@@ -39,7 +38,8 @@ const Overview: React.FC<Props> = ({ address, provider, jsonRpcProvider }) => {
 
   async function getBal() {
     setRefreshing(true)
-    const bal = await jsonRpcProvider?.getBalance(address)
+    // const bal = await jsonRpcProvider?.getBalance(address)
+    const bal = await provider?.getBalance(address)
     if (bal) {
       const balSplit = ethers.utils.formatUnits(bal, 18).split(".")
       balSplit[1] = balSplit[1].substring(0, 6)

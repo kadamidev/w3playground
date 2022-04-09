@@ -28,8 +28,6 @@ function App() {
   const [ethersProvider, setEthersProvider] = useState<Web3Provider | null>(
     null
   )
-  const [jsonRpcProvider, setJsonRpcProvider] =
-    useState<JsonRpcProvider | null>(null)
   const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner | null>(
     null
   )
@@ -41,10 +39,8 @@ function App() {
     if (typeof window.ethereum !== "undefined") {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const jsonRpcProvider = new ethers.providers.JsonRpcProvider()
       setEthersProvider(provider)
       setSigner(signer)
-      setJsonRpcProvider(jsonRpcProvider)
 
       const addresses = await provider.send("eth_requestAccounts", [])
 
@@ -100,28 +96,16 @@ function App() {
   function renderApplet() {
     switch (activeApplet) {
       case Applets.OVERVIEW:
-        return (
-          <Overview
-            address={address}
-            provider={ethersProvider}
-            jsonRpcProvider={jsonRpcProvider}
-          />
-        )
+        return <Overview address={address} provider={ethersProvider} />
       case Applets.SEND:
         return (
-          <Send
-            address={address}
-            provider={ethersProvider}
-            jsonRpcProvider={jsonRpcProvider}
-            signer={signer}
-          />
+          <Send address={address} provider={ethersProvider} signer={signer} />
         )
       case Applets.MINT_NFT:
         return (
           <MintNFT
             address={address}
             provider={ethersProvider}
-            jsonRpcProvider={jsonRpcProvider}
             signer={signer}
           />
         )

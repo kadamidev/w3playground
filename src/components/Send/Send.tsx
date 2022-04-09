@@ -27,16 +27,10 @@ import { useClipboard } from "@mantine/hooks"
 interface Props {
   address: string
   provider: Web3Provider | null
-  jsonRpcProvider: JsonRpcProvider | null
   signer: ethers.providers.JsonRpcSigner | null
 }
 
-const Send: React.FC<Props> = ({
-  address,
-  provider,
-  signer,
-  jsonRpcProvider,
-}) => {
+const Send: React.FC<Props> = ({ address, provider, signer }) => {
   const [balance, setBalance] = useState<number>(0.0)
   const [loading, setLoading] = useState(false)
   const theme = useMantineTheme()
@@ -109,7 +103,7 @@ const Send: React.FC<Props> = ({
   }
 
   async function getBal() {
-    const bal = await jsonRpcProvider?.getBalance(address)
+    const bal = await provider?.getBalance(address)
     if (bal) {
       const balSplit = ethers.utils.formatUnits(bal, 18).split(".")
       balSplit[1] = balSplit[1].substring(0, 10)
