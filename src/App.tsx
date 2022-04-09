@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import "./App.css"
 import {
   AppShell,
@@ -33,7 +33,6 @@ function App() {
   const [signer, setSigner] = useState<ethers.providers.JsonRpcSigner | null>(
     null
   )
-
   const [address, setAddress] = useState<string>("")
   const [darkMode, setDarkMode] = useState<ColorScheme>("dark")
   const [activeApplet, setActiveApplet] = useState<Applets>(Applets.OVERVIEW)
@@ -48,6 +47,7 @@ function App() {
       setJsonRpcProvider(jsonRpcProvider)
 
       const addresses = await provider.send("eth_requestAccounts", [])
+
       setAddress(addresses[0])
       showNotification({
         title: "Successfully Connected",
@@ -85,7 +85,7 @@ function App() {
         "#A6A7AA",
         "#909296",
         "#5C5F65",
-        "#3A6331",
+        "#282928",
         "#224E18",
         "#202320",
         "#1A1D19",
@@ -143,6 +143,11 @@ function App() {
           },
         }),
         TextInput: (theme) => ({
+          filledVariant: {
+            backgroundColor: darkMode === "dark" ? theme.colors.dark[7] : "",
+          },
+        }),
+        NumberInput: (theme) => ({
           filledVariant: {
             backgroundColor: darkMode === "dark" ? theme.colors.dark[7] : "",
           },

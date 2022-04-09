@@ -13,15 +13,20 @@ import {
   Table,
   Accordion,
   Transition,
+  Alert,
+  NumberInput,
 } from "@mantine/core"
 import { useForm, yupResolver } from "@mantine/form"
 import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
-import { ethers } from "ethers"
+import { ethers, BigNumber } from "ethers"
 import * as yup from "yup"
 import { FaCheck } from "react-icons/fa"
 import { IoMdClose } from "react-icons/io"
 import { showNotification } from "@mantine/notifications"
 import { useClipboard } from "@mantine/hooks"
+import { contractHash } from "../../test_contracts/testParams"
+import mintTestAbi from "../../test_contracts/mintTestAbi.json"
+import { GiBalloonDog } from "react-icons/gi"
 
 interface Props {
   address: string
@@ -55,20 +60,12 @@ const MintNFT: React.FC<Props> = ({
       .required("Amount is required")
       .typeError("Amount has to be a number")
       .positive("Amount has to be positive")
-      .max(balance, "Insufficient balance"),
-
-    address: yup
-      .string()
-      .required("Address is required")
-      .test("isValidAddress", "Invalid address", function (input) {
-        return ethers.utils.isAddress(input!)
-      }),
+      .max(3, "Can only mint 3 at a time"),
   })
 
   const form = useForm({
     initialValues: {
       amount: "",
-      address: "",
     },
     schema: yupResolver(sendSchema),
   })
@@ -77,25 +74,30 @@ const MintNFT: React.FC<Props> = ({
     getBal()
   }, [address])
 
-  async function handleSend(values: { amount: string; address: string }) {
+  async function handleMint(values: { amount: string }) {
     setLoading(true)
-    if (signer) {
+    if (window.ethereum && signer) {
+      const contract = new ethers.Contract(
+        contractHash,
+        mintTestAbi.abi,
+        signer
+      )
+
       try {
-        const tx = await signer.sendTransaction({
-          to: values.address,
-          value: ethers.utils.parseEther(values.amount),
-        })
+        const res = await contract.mint(BigNumber.from(values.amount))
+        console.log(res)
         setLoading(false)
-        setLastHashes([...lastHashes, { hash: tx.hash }])
-        setFeedback("success")
+        // setFeedback("success")
         showNotification({
-          title: "Successfully Sent",
-          message: `${values.amount} ETH to ${values.address}`,
+          title: "Successfully Minted",
+          message: `Successfully minted ${values.amount} NFT${
+            parseInt(values.amount) > 1 ? "'s" : ""
+          }`,
           color: "sandboxGreen",
           icon: <FaCheck />,
         })
       } catch (e: any) {
-        setFeedback("failed")
+        // setFeedback("failed")
         setLoading(false)
         showNotification({
           title: "Failed sending",
@@ -168,20 +170,36 @@ const MintNFT: React.FC<Props> = ({
             >
               {address !== "" ? address : "awaiting connection"}
             </Badge>
-            <form onSubmit={form.onSubmit((values) => handleSend(values))}>
-              <TextInput
-                mt="md"
-                type="number"
+
+            <Alert
+              mt="md"
+              icon={<GiBalloonDog size={"20px"} />}
+              title="Rinkeby Doges"
+              variant="light"
+              radius="md"
+              sx={(theme) => ({
+                backgroundColor:
+                  theme.colorScheme === "dark" ? theme.colors.dark[4] : "",
+              })}
+            >
+              Rinkeby Doges are magnificent pieces of art only available on the
+              Rinkeby Testnet, switch your network to Rinkeby Test Network if
+              you wish to mint them. There's an infinite supply of them
+              available, however you may only mint 3 at a time.
+            </Alert>
+            <form onSubmit={form.onSubmit((values) => handleMint(values))}>
+              <Text size="sm">Available: Unlimited</Text>
+              <Text size="sm">Mint Price: 0.001</Text>
+              <NumberInput
+                defaultValue={1}
+                label="Amount"
                 required
-                label="Mint Function"
+                variant="filled"
                 {...form.getInputProps("amount")}
               />
-              <TextInput
-                required
-                label="Contract"
-                placeholder="0x..."
-                {...form.getInputProps("address")}
-              />
+              <Text size="sm">
+                Total: {0.001 * parseInt(form.values.amount)}
+              </Text>
               <Group position="apart" mt="md">
                 <Box>
                   {loading && <Loader className="loader" />}
@@ -194,7 +212,7 @@ const MintNFT: React.FC<Props> = ({
                   variant="outline"
                   disabled={loading}
                 >
-                  Send
+                  Mint
                 </Button>
               </Group>
             </form>

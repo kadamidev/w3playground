@@ -145,6 +145,7 @@ const Send: React.FC<Props> = ({
             })}
           >
             <Title order={2}>Send</Title>
+
             <Badge
               mt="md"
               color={address !== "" ? "" : "orange"}
@@ -169,6 +170,7 @@ const Send: React.FC<Props> = ({
             >
               {address !== "" ? address : "awaiting connection"}
             </Badge>
+
             <form onSubmit={form.onSubmit((values) => handleSend(values))}>
               <TextInput
                 mt="md"

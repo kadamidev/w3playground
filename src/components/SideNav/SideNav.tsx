@@ -7,6 +7,7 @@ import {
   ColorScheme,
   ThemeIcon,
   ActionIcon,
+  Badge,
 } from "@mantine/core"
 import { IoWalletOutline } from "react-icons/io5"
 import { MdSend } from "react-icons/md"
@@ -93,6 +94,9 @@ const SideNav: React.FC<Props> = ({
             color={theme.primaryColor}
             size="xl"
             onClick={() => handleAppletSwitch(Applets.MINT_NFT)}
+            disabled
+            className="btnDisable"
+            // sx={{ ":disabled": { backgroundColor: "green" } }}
           >
             <ThemeIcon
               size="lg"
@@ -103,6 +107,16 @@ const SideNav: React.FC<Props> = ({
               <GiFairyWand />
             </ThemeIcon>
             Mint NFT
+            <Badge
+              ml="5px"
+              variant="gradient"
+              gradient={{ from: "#ed6ea0", to: "#ec8c69", deg: 35 }}
+              radius="xs"
+              size="xs"
+              sx={{ cursor: "not-allowed" }}
+            >
+              WIP
+            </Badge>
           </Button>
         </div>
         <div className="navBottom">
