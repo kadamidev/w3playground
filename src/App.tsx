@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useEffect, useState } from "react"
 import "./App.css"
 import {
   AppShell,
@@ -49,19 +49,14 @@ function App() {
       setSigner(signer)
       const wrappedProv: MonkeyProvider = provider.provider
 
-      provider.removeAllListeners()
       wrappedProv.removeAllListeners!()
-
       wrappedProv.on!("accountsChanged", () => {
         connectWallet()
       })
-      // provider.on("network", (newNetwork, oldNetwork) => {
-      //   console.log("hi")
-      // })
 
       const addresses = await provider.send("eth_requestAccounts", [])
-
       setAddress(addresses[0])
+
       showNotification({
         title: "Successfully Connected",
         message: `${addresses[0]}`,
