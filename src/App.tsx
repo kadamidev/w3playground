@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import "./App.css"
 import {
   AppShell,
   MantineThemeOverride,
   MantineProvider,
   ColorScheme,
-  Button,
 } from "@mantine/core"
 import { NotificationsProvider, showNotification } from "@mantine/notifications"
 import { ethers } from "ethers"
 import HeaderNav from "./components/HeaderNav/HeaderNav"
 import SideNav from "./components/SideNav/SideNav"
 import Overview from "./components/Overview/Overview"
-import { Web3Provider } from "@ethersproject/providers"
+import { ExternalProvider, Web3Provider } from "@ethersproject/providers"
 import { GiFox } from "react-icons/gi"
 import { FaCheck } from "react-icons/fa"
 import Send from "./components/Send/Send"
@@ -23,6 +22,11 @@ export enum Applets {
   OVERVIEW,
   SEND,
   MINT_NFT,
+}
+
+interface MonkeyProvider extends ExternalProvider {
+  on?: Web3Provider["on"]
+  removeAllListeners?: Web3Provider["removeAllListeners"]
 }
 
 function App() {
@@ -39,29 +43,21 @@ function App() {
 
   async function connectWallet() {
     if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const provider = new ethers.providers.Web3Provider(window.ethereum, "any")
       const signer = provider.getSigner()
       setEthersProvider(provider)
       setSigner(signer)
+      const wrappedProv: MonkeyProvider = provider.provider
 
-      // provider.on("accountsChanged", function (accounts: any) {
-      //   // Time to reload your interface with accounts[0]!
-      //   console.log("hi", accounts)
+      provider.removeAllListeners()
+      wrappedProv.removeAllListeners!()
+
+      wrappedProv.on!("accountsChanged", () => {
+        connectWallet()
+      })
+      // provider.on("network", (newNetwork, oldNetwork) => {
+      //   console.log("hi")
       // })
-      provider.on("network", () => console.log("network changed"))
-
-      provider.on("accountsChanged", (accounts) => {
-        // Handle the new accounts, or lack thereof.
-        // "accounts" will always be an array, but it can be empty.
-        console.log(accounts)
-      })
-
-      provider.on("chainChanged", (chainId) => {
-        // Handle the new chain.
-        // Correctly handling chain changes can be complicated.
-        // We recommend reloading the page unless you have good reason not to.
-        console.log(chainId)
-      })
 
       const addresses = await provider.send("eth_requestAccounts", [])
 
@@ -228,7 +224,6 @@ function App() {
           }
         >
           {renderApplet()}
-          <Button onClick={getChain}>hi</Button>
         </AppShell>
       </NotificationsProvider>
     </MantineProvider>
