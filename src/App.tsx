@@ -17,6 +17,7 @@ import { FaCheck } from "react-icons/fa"
 import Send from "./components/Send/Send"
 import MintNFT from "./components/MintNFT/MintNFT"
 import { BiNetworkChart } from "react-icons/bi"
+import { useLocalStorage } from "@mantine/hooks"
 
 export enum Applets {
   OVERVIEW,
@@ -30,6 +31,12 @@ interface MonkeyProvider extends ExternalProvider {
 }
 
 function App() {
+  const [darkMode, setDarkMode] = useLocalStorage<ColorScheme>({
+    key: "mantine-color-scheme",
+    defaultValue: "dark",
+    getInitialValueInEffect: true,
+  })
+
   const [opened, setOpened] = useState(false)
   const [ethersProvider, setEthersProvider] = useState<Web3Provider | null>(
     null
@@ -38,7 +45,6 @@ function App() {
     null
   )
   const [address, setAddress] = useState<string>("")
-  const [darkMode, setDarkMode] = useState<ColorScheme>("dark")
   const [activeApplet, setActiveApplet] = useState<Applets>(Applets.OVERVIEW)
 
   async function connectWallet() {
