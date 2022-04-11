@@ -5,17 +5,19 @@ import {
   MantineThemeOverride,
   MantineProvider,
   ColorScheme,
+  Button,
 } from "@mantine/core"
 import { NotificationsProvider, showNotification } from "@mantine/notifications"
 import { ethers } from "ethers"
 import HeaderNav from "./components/HeaderNav/HeaderNav"
 import SideNav from "./components/SideNav/SideNav"
 import Overview from "./components/Overview/Overview"
-import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
+import { Web3Provider } from "@ethersproject/providers"
 import { GiFox } from "react-icons/gi"
 import { FaCheck } from "react-icons/fa"
 import Send from "./components/Send/Send"
 import MintNFT from "./components/MintNFT/MintNFT"
+import { BiNetworkChart } from "react-icons/bi"
 
 export enum Applets {
   OVERVIEW,
@@ -42,6 +44,25 @@ function App() {
       setEthersProvider(provider)
       setSigner(signer)
 
+      // provider.on("accountsChanged", function (accounts: any) {
+      //   // Time to reload your interface with accounts[0]!
+      //   console.log("hi", accounts)
+      // })
+      provider.on("network", () => console.log("network changed"))
+
+      provider.on("accountsChanged", (accounts) => {
+        // Handle the new accounts, or lack thereof.
+        // "accounts" will always be an array, but it can be empty.
+        console.log(accounts)
+      })
+
+      provider.on("chainChanged", (chainId) => {
+        // Handle the new chain.
+        // Correctly handling chain changes can be complicated.
+        // We recommend reloading the page unless you have good reason not to.
+        console.log(chainId)
+      })
+
       const addresses = await provider.send("eth_requestAccounts", [])
 
       setAddress(addresses[0])
@@ -58,6 +79,36 @@ function App() {
         color: "orange",
         icon: <GiFox />,
       })
+    }
+  }
+
+  function checkConnection() {
+    if (typeof window.ethereum !== "undefined" && address) return true
+    showNotification({
+      title: "Awaiting connection",
+      message: "Connect your MetaMask to be able to interact with the app.",
+      color: "orange",
+      icon: <GiFox />,
+    })
+    return false
+  }
+
+  async function getChain() {
+    const network = await ethersProvider?.getNetwork()
+    const testnets = [3, 4, 42, 5, 1337]
+
+    if (network && testnets.includes(network.chainId)) {
+      return true
+    } else {
+      showNotification({
+        title: "Unsupported Network",
+        autoClose: 10000,
+        message:
+          "This app only supports testnets, please switch your MetaMask to a test network RPC or to your own local testing environment using network ID 1337",
+        color: "red",
+        icon: <BiNetworkChart />,
+      })
+      return false
     }
   }
 
@@ -96,10 +147,22 @@ function App() {
   function renderApplet() {
     switch (activeApplet) {
       case Applets.OVERVIEW:
-        return <Overview address={address} provider={ethersProvider} />
+        return (
+          <Overview
+            address={address}
+            provider={ethersProvider}
+            checkConnection={checkConnection}
+          />
+        )
       case Applets.SEND:
         return (
-          <Send address={address} provider={ethersProvider} signer={signer} />
+          <Send
+            address={address}
+            provider={ethersProvider}
+            signer={signer}
+            getChain={getChain}
+            checkConnection={checkConnection}
+          />
         )
       case Applets.MINT_NFT:
         return (
@@ -107,6 +170,8 @@ function App() {
             address={address}
             provider={ethersProvider}
             signer={signer}
+            getChain={getChain}
+            checkConnection={checkConnection}
           />
         )
     }
@@ -163,6 +228,7 @@ function App() {
           }
         >
           {renderApplet()}
+          <Button onClick={getChain}>hi</Button>
         </AppShell>
       </NotificationsProvider>
     </MantineProvider>

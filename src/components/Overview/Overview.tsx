@@ -17,9 +17,10 @@ import { useClipboard } from "@mantine/hooks"
 interface Props {
   address: string
   provider: Web3Provider | null
+  checkConnection: () => boolean
 }
 
-const Overview: React.FC<Props> = ({ address, provider }) => {
+const Overview: React.FC<Props> = ({ address, provider, checkConnection }) => {
   const [balance, setBalance] = useState("0.0")
   const [refreshing, setRefreshing] = useState(false)
   const [opened, setOpened] = useState(false)

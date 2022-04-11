@@ -28,9 +28,17 @@ interface Props {
   address: string
   provider: Web3Provider | null
   signer: ethers.providers.JsonRpcSigner | null
+  getChain: () => Promise<boolean>
+  checkConnection: () => boolean
 }
 
-const Send: React.FC<Props> = ({ address, provider, signer }) => {
+const Send: React.FC<Props> = ({
+  address,
+  provider,
+  signer,
+  getChain,
+  checkConnection,
+}) => {
   const [balance, setBalance] = useState<number>(0.0)
   const [loading, setLoading] = useState(false)
   const theme = useMantineTheme()
@@ -50,6 +58,11 @@ const Send: React.FC<Props> = ({ address, provider, signer }) => {
       .required("Amount is required")
       .typeError("Amount has to be a number")
       .positive("Amount has to be positive")
+      .test(
+        "isConnected",
+        "Insufficient balance - unconnected",
+        checkConnection
+      )
       .max(balance, "Insufficient balance"),
 
     address: yup
@@ -74,7 +87,8 @@ const Send: React.FC<Props> = ({ address, provider, signer }) => {
 
   async function handleSend(values: { amount: string; address: string }) {
     setLoading(true)
-    if (signer) {
+    const testnet: boolean = await getChain()
+    if (window.ethereum && signer && testnet) {
       try {
         const tx = await signer.sendTransaction({
           to: values.address,
@@ -100,6 +114,7 @@ const Send: React.FC<Props> = ({ address, provider, signer }) => {
         })
       }
     }
+    setLoading(false)
   }
 
   async function getBal() {

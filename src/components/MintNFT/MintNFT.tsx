@@ -32,9 +32,17 @@ interface Props {
   address: string
   provider: Web3Provider | null
   signer: ethers.providers.JsonRpcSigner | null
+  getChain: () => Promise<boolean>
+  checkConnection: () => boolean
 }
 
-const MintNFT: React.FC<Props> = ({ address, provider, signer }) => {
+const MintNFT: React.FC<Props> = ({
+  address,
+  provider,
+  signer,
+  getChain,
+  checkConnection,
+}) => {
   const [balance, setBalance] = useState<number>(0.0)
   const [loading, setLoading] = useState(false)
   const theme = useMantineTheme()
@@ -70,7 +78,7 @@ const MintNFT: React.FC<Props> = ({ address, provider, signer }) => {
 
   async function handleMint(values: { amount: string }) {
     setLoading(true)
-    if (window.ethereum && signer) {
+    if (window.ethereum && checkConnection() && signer) {
       const contract = new ethers.Contract(
         contractHash,
         mintTestAbi.abi,
