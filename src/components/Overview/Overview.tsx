@@ -74,6 +74,9 @@ const Overview: React.FC<Props> = ({ address, provider, checkConnection }) => {
             <Badge
               mt="md"
               color={address !== "" ? "" : "orange"}
+              style={
+                address !== "" ? { cursor: "pointer" } : { cursor: "default" }
+              }
               sx={
                 clipboard.copied
                   ? {

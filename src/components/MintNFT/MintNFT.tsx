@@ -151,6 +151,9 @@ const MintNFT: React.FC<Props> = ({
             <Badge
               mt="md"
               color={address !== "" ? "" : "orange"}
+              style={
+                address !== "" ? { cursor: "pointer" } : { cursor: "default" }
+              }
               sx={
                 clipboard.copied
                   ? {
