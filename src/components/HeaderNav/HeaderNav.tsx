@@ -60,7 +60,7 @@ const HeaderNav: React.FC<Props> = ({
             weight={700}
             variant="gradient"
             gradient={{ from: "sandboxGreen", to: "lime", deg: 45 }}
-            style={{ fontFamily: "Poppins" }}
+            style={{ fontFamily: "Poppins", userSelect: "none" }}
           >
             w3Playground
           </Text>
