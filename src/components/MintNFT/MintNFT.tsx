@@ -17,15 +17,15 @@ import {
   NumberInput,
 } from "@mantine/core"
 import { useForm, yupResolver } from "@mantine/form"
-import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
+import { Web3Provider } from "@ethersproject/providers"
 import { ethers, BigNumber } from "ethers"
 import * as yup from "yup"
 import { FaCheck } from "react-icons/fa"
 import { IoMdClose } from "react-icons/io"
 import { showNotification } from "@mantine/notifications"
 import { useClipboard } from "@mantine/hooks"
-import { contractHash } from "../../test_contracts/testParams"
-import mintTestAbi from "../../test_contracts/mintTestAbi.json"
+// import { contractHash } from "../../test_contracts/testParams"
+// import mintTestAbi from "../../test_contracts/mintTestAbi.json"
 import { GiBalloonDog } from "react-icons/gi"
 
 interface Props {
@@ -79,15 +79,15 @@ const MintNFT: React.FC<Props> = ({
   async function handleMint(values: { amount: string }) {
     setLoading(true)
     if (window.ethereum && checkConnection() && signer) {
-      const contract = new ethers.Contract(
-        contractHash,
-        mintTestAbi.abi,
-        signer
-      )
+      // const contract = new ethers.Contract(
+      //   contractHash,
+      //   mintTestAbi.abi,
+      //   signer
+      // )
 
       try {
-        const res = await contract.mint(BigNumber.from(values.amount))
-        console.log(res)
+        // const res = await contract.mint(BigNumber.from(values.amount))
+        // console.log(res)
         setLoading(false)
         // setFeedback("success")
         showNotification({
