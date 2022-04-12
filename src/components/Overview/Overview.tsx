@@ -9,7 +9,7 @@ import {
   Transition,
   ColorInput,
 } from "@mantine/core"
-import { Web3Provider, JsonRpcProvider } from "@ethersproject/providers"
+import { Web3Provider } from "@ethersproject/providers"
 import { ethers } from "ethers"
 import { FiRefreshCw } from "react-icons/fi"
 import { useClipboard } from "@mantine/hooks"

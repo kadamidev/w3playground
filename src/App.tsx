@@ -55,11 +55,6 @@ function App() {
       setSigner(signer)
       const wrappedProv: MonkeyProvider = provider.provider
 
-      wrappedProv.removeAllListeners!()
-      wrappedProv.on!("accountsChanged", () => {
-        connectWallet()
-      })
-
       const addresses = await provider.send("eth_requestAccounts", [])
       setAddress(addresses[0])
 
@@ -68,6 +63,11 @@ function App() {
         message: `${addresses[0]}`,
         color: "sandboxGreen",
         icon: <FaCheck />,
+      })
+
+      wrappedProv.removeAllListeners!()
+      wrappedProv.on!("accountsChanged", (newAddress) => {
+        connectWallet()
       })
     } else {
       showNotification({
