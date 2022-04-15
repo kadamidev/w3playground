@@ -1,0 +1,47 @@
+.blankNftContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.spinningQ {
+  user-select: none;
+  color: transparent;
+  background: linear-gradient(
+    238deg,
+    #00ff1a,
+    #e8ff00,
+    #ec5cff,
+    #5cabff,
+    #ffc65c,
+    #6156cd
+  );
+  background-size: 400% 400%;
+  overflow: hidden;
+  background-clip: text;
+
+  animation: gradientAnim 10s ease infinite,
+    spin 10s ease-in-out infinite alternate;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg) scale(1.7);
+  }
+  to {
+    transform: rotate(1080deg) scale(1);
+  }
+}
+
+@keyframes gradientAnim {
+  0% {
+    background-position: 0% 94%;
+  }
+  50% {
+    background-position: 100% 7%;
+  }
+  100% {
+    background-position: 0% 94%;
+  }
+}
