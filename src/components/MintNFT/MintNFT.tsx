@@ -15,6 +15,7 @@ import {
   Transition,
   Alert,
   NumberInput,
+  Slider,
 } from "@mantine/core"
 import { useForm, yupResolver } from "@mantine/form"
 import { Web3Provider } from "@ethersproject/providers"
@@ -24,9 +25,10 @@ import { FaCheck } from "react-icons/fa"
 import { IoMdClose } from "react-icons/io"
 import { showNotification } from "@mantine/notifications"
 import { useClipboard } from "@mantine/hooks"
-// import { contractHash } from "../../test_contracts/testParams"
-// import mintTestAbi from "../../test_contracts/mintTestAbi.json"
+import { contractHash } from "../../test_contracts/testParams"
+import dogesAbi from "./dogesAbi.json"
 import { GiBalloonDog } from "react-icons/gi"
+import BlankNFT from "../BlankNFT/BlankNFT"
 
 interface Props {
   address: string
@@ -49,6 +51,8 @@ const MintNFT: React.FC<Props> = ({
   const [feedback, setFeedback] = useState<string>("")
   const [lastHashes, setLastHashes] = useState<{ hash: string }[]>([])
   const [opened, setOpened] = useState(false)
+  const [currentMint, setCurrentMint] = useState<string[]>([])
+  const [quantity, setQuantity] = useState(3)
 
   useEffect(() => {
     setOpened(true)
@@ -56,45 +60,41 @@ const MintNFT: React.FC<Props> = ({
 
   const clipboard = useClipboard({ timeout: 500 })
 
-  const sendSchema = yup.object().shape({
-    amount: yup
-      .number()
-      .required("Amount is required")
-      .typeError("Amount has to be a number")
-      .positive("Amount has to be positive")
-      .max(3, "Can only mint 3 at a time"),
-  })
-
-  const form = useForm({
-    initialValues: {
-      amount: "",
-    },
-    schema: yupResolver(sendSchema),
-  })
-
   useEffect(() => {
     getBal()
   }, [address])
 
-  async function handleMint(values: { amount: string }) {
+  async function handleMint() {
     setLoading(true)
+    const qty = quantity.valueOf()
     if (window.ethereum && checkConnection() && signer) {
-      // const contract = new ethers.Contract(
-      //   contractHash,
-      //   mintTestAbi.abi,
-      //   signer
-      // )
+      const contract = new ethers.Contract(contractHash, dogesAbi.abi, signer)
 
       try {
-        // const res = await contract.mint(BigNumber.from(values.amount))
+        const beforeBal = Number(await contract.balanceOf(address))
+        const res = await contract.mint(BigNumber.from(qty))
+        console.log(res)
+
+        if (await res.wait(1)) {
+          const tokenId = Number(
+            await contract.tokenOfOwnerByIndex(address, beforeBal)
+          )
+
+          const minted = []
+          for (let i = 0; i < Number(qty); i++) {
+            const uri = await contract.tokenURI(BigNumber.from(tokenId + i))
+            minted.push(uri)
+          }
+
+          setCurrentMint(minted)
+        }
+
         // console.log(res)
         setLoading(false)
         // setFeedback("success")
         showNotification({
           title: "Successfully Minted",
-          message: `Successfully minted ${values.amount} NFT${
-            parseInt(values.amount) > 1 ? "'s" : ""
-          }`,
+          message: `Successfully minted ${qty} NFT${qty > 1 ? "'s" : ""}`,
           color: "sandboxGreen",
           icon: <FaCheck />,
         })
@@ -121,11 +121,13 @@ const MintNFT: React.FC<Props> = ({
     }
   }
 
-  const rows = lastHashes.map((element) => (
-    <tr key={element.hash}>
-      <td>{element.hash}</td>
-    </tr>
-  ))
+  const amounts = [
+    { value: 1, label: "1 DOGE" },
+    { value: 2, label: "2 DOGES" },
+    { value: 3, label: "3 DOGES" },
+    { value: 4, label: "4 DOGES" },
+    { value: 5, label: "5 DOGES" },
+  ]
 
   return (
     <Transition
@@ -183,6 +185,7 @@ const MintNFT: React.FC<Props> = ({
               variant="light"
               radius="md"
               sx={(theme) => ({
+                color: theme.colors.sandboxGreen[5],
                 backgroundColor:
                   theme.colorScheme === "dark" ? theme.colors.dark[4] : "",
               })}
@@ -190,21 +193,43 @@ const MintNFT: React.FC<Props> = ({
               Rinkeby Doges are magnificent pieces of art only available on the
               Rinkeby Testnet, switch your network to Rinkeby Test Network if
               you wish to mint them. There's an infinite supply of them
-              available, however you may only mint 3 at a time.
+              available, however you may only mint 5 at a time.
             </Alert>
-            <form onSubmit={form.onSubmit((values) => handleMint(values))}>
-              <Text size="sm">Available: Unlimited</Text>
-              <Text size="sm">Mint Price: 0.001</Text>
-              <NumberInput
-                defaultValue={1}
-                label="Amount"
-                required
-                variant="filled"
-                {...form.getInputProps("amount")}
-              />
-              <Text size="sm">
-                Total: {0.001 * parseInt(form.values.amount)}
+            <form>
+              <Text size="sm" mt="md">
+                Available: Unlimited
               </Text>
+              <Text size="sm">Mint Price: FREE</Text>
+              {/* <Box mt="xl" sx={{ width: "90%", display: "flex" }}> */}
+
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <BlankNFT />
+              </Box>
+              <Text size="xs" mt="xl">
+                Qty
+              </Text>
+              <Slider
+                size="lg"
+                label={(val) =>
+                  amounts.find((mark) => mark.value === val)?.label
+                }
+                defaultValue={quantity}
+                min={1}
+                max={5}
+                marks={amounts}
+                styles={{
+                  markLabel: { display: "none" },
+                  label: {
+                    backgroundColor: theme.colors.sandboxGreen[5],
+                    textShadow: "1px 1px 4px rgba(0, 0, 0, 0.25)",
+                  },
+                }}
+                onChangeEnd={(v) => setQuantity(v)}
+                labelAlwaysOn
+                sx={{ minWidth: "100%" }}
+              />
+              {/* </Box> */}
+
               <Group position="apart" mt="md">
                 <Box>
                   {loading && <Loader className="loader" />}
@@ -212,8 +237,7 @@ const MintNFT: React.FC<Props> = ({
                 </Box>
 
                 <Button
-                  mb="xs"
-                  type="submit"
+                  onClick={handleMint}
                   variant="outline"
                   disabled={loading}
                 >
@@ -221,50 +245,6 @@ const MintNFT: React.FC<Props> = ({
                 </Button>
               </Group>
             </form>
-
-            {/* {lastHashes.length > 0 && ( */}
-            <Transition
-              mounted={lastHashes.length > 0}
-              transition="slide-up"
-              duration={400}
-              timingFunction="ease"
-            >
-              {(styles) => (
-                <Accordion
-                  style={styles}
-                  iconPosition="right"
-                  iconSize={40}
-                  sx={
-                    lastHashes.length > 0
-                      ? {}
-                      : { height: "40px", overflow: "hidden" }
-                  }
-                >
-                  <Accordion.Item label="Last Hashes">
-                    <Table
-                      mt="md"
-                      verticalSpacing="sm"
-                      fontSize="xs"
-                      striped
-                      highlightOnHover
-                      sx={(theme) => ({
-                        backgroundColor:
-                          theme.colorScheme === "dark"
-                            ? theme.colors.dark[7]
-                            : "",
-                      })}
-                    >
-                      <thead>
-                        <tr>
-                          <th>TX Hash</th>
-                        </tr>
-                      </thead>
-                      <tbody>{rows}</tbody>
-                    </Table>
-                  </Accordion.Item>
-                </Accordion>
-              )}
-            </Transition>
           </Paper>
         </div>
       )}
