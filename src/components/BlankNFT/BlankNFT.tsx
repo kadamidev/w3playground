@@ -7,15 +7,15 @@ const BlankNFT = () => {
 
   return (
     <Paper
-      mt="sm"
       shadow="sm"
       sx={{
+        position: "absolute",
         [`@media (min-width: ${theme.breakpoints.xs}px)`]: {
           width: "300px",
           height: "300px",
         },
-        width: "200px",
-        height: "200px",
+        width: "220px",
+        height: "220px",
         backgroundColor:
           theme.colorScheme === "dark"
             ? theme.colors.dark[4]
@@ -30,8 +30,8 @@ const BlankNFT = () => {
             width: "300px",
             height: "300px",
           },
-          width: "200px",
-          height: "200px",
+          width: "220px",
+          height: "220px",
         }}
       >
         <Text
