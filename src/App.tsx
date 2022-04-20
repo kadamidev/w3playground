@@ -6,6 +6,7 @@ import {
   MantineProvider,
   ColorScheme,
 } from "@mantine/core"
+import { useElementSize } from "@mantine/hooks"
 import { NotificationsProvider, showNotification } from "@mantine/notifications"
 import { ethers } from "ethers"
 import HeaderNav from "./components/HeaderNav/HeaderNav"
@@ -46,6 +47,8 @@ function App() {
   )
   const [address, setAddress] = useState<string>("")
   const [activeApplet, setActiveApplet] = useState<Applets>(Applets.OVERVIEW)
+
+  const { ref, width: vWidth, height: sHeight } = useElementSize()
 
   async function connectWallet() {
     if (typeof window.ethereum !== "undefined") {
@@ -169,6 +172,8 @@ function App() {
             signer={signer}
             getChain={getChain}
             checkConnection={checkConnection}
+            vWidth={vWidth}
+            sHeight={sHeight}
           />
         )
     }
@@ -203,6 +208,7 @@ function App() {
     >
       <NotificationsProvider>
         <AppShell
+          ref={ref}
           navbarOffsetBreakpoint="sm"
           fixed
           navbar={
