@@ -1,0 +1,36 @@
+.slideWrapper {
+  border-radius: 9px;
+  /* overflow: hidden; */
+  user-select: none;
+}
+
+button.control-arrow.control-next::before {
+  border-left: 8px solid #68e349 !important;
+  position: absolute !important;
+  bottom: 10px;
+  right: 5px;
+}
+
+button.control-arrow.control-prev::before {
+  border-right: 8px solid #68e349 !important;
+  position: absolute !important;
+  bottom: 10px;
+  left: 5px;
+}
+
+button.control-arrow {
+  width: 30px !important;
+}
+button.control-arrow:hover {
+  background: rgba(104, 227, 73, 0.2) !important;
+}
+button.control-arrow.control-prev:hover {
+  border-radius: 9px 0px 0px 9px;
+}
+button.control-arrow.control-next:hover {
+  border-radius: 0px 9px 9px 0px;
+}
+
+li.dot.selected {
+  opacity: 0.7 !important;
+}
