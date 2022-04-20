@@ -87,7 +87,7 @@ const MintNFT: React.FC<Props> = ({
 
   async function handleMint() {
     const qty = quantity.valueOf()
-    if (window.ethereum && checkConnection() && signer) {
+    if (checkConnection() && window.ethereum && signer) {
       if ((await provider!.getNetwork()).chainId !== 4) {
         showNotification({
           title: "Unsupported Network",
