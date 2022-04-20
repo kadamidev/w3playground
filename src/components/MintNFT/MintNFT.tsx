@@ -372,7 +372,6 @@ const MintNFT: React.FC<Props> = ({
           </div>
         )}
       </Transition>
-      <Button onClick={() => setShowSlider(!showSlider)}> do somethnig</Button>
       <Confetti
         width={vWidth}
         height={sHeight}
