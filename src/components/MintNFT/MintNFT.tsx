@@ -45,7 +45,10 @@ export interface CurrentMintI {
   loaded: boolean
 }
 
-const contractHash = "0x4cd46e623aaaD7B396511A9Da9D61eBEd63fc94e"
+const contractHash =
+  process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_RINK_HASH!
+    : process.env.REACT_APP_TEST_HASH!
 
 const MintNFT: React.FC<Props> = ({
   address,
@@ -88,7 +91,10 @@ const MintNFT: React.FC<Props> = ({
   async function handleMint() {
     const qty = quantity.valueOf()
     if (checkConnection() && window.ethereum && signer) {
-      if ((await provider!.getNetwork()).chainId !== 4) {
+      if (
+        process.env.NODE_ENV === "production" &&
+        (await provider!.getNetwork()).chainId !== 4
+      ) {
         showNotification({
           title: "Unsupported Network",
           autoClose: 10000,
@@ -102,7 +108,6 @@ const MintNFT: React.FC<Props> = ({
 
       setCurrentMint([])
       if (showSlider) {
-        console.log("showslider set to false in handleMint")
         setShowSlider(false)
       }
       setLoadingStatus("breeding")
@@ -151,6 +156,12 @@ const MintNFT: React.FC<Props> = ({
           message: `${e.message}`,
           color: "red",
           icon: <IoMdClose />,
+          styles: {
+            description: {
+              height: "100px",
+              overflow: "scroll !important",
+            },
+          },
         })
       }
     }
