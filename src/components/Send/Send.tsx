@@ -111,6 +111,12 @@ const Send: React.FC<Props> = ({
           message: `${e.message}`,
           color: "red",
           icon: <IoMdClose />,
+          styles: {
+            description: {
+              height: "100px",
+              overflow: "scroll !important",
+            },
+          },
         })
       }
     }
