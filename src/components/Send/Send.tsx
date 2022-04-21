@@ -113,7 +113,7 @@ const Send: React.FC<Props> = ({
           icon: <IoMdClose />,
           styles: {
             description: {
-              height: "100px",
+              maxHeight: "100px",
               overflow: "scroll !important",
             },
           },
