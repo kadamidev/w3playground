@@ -2,8 +2,7 @@
 
 An experimental project made to learn and familiarize myself with anything that web3 has to offer. Mainly constructed using ts/react/ethers/mantine/ipfs/sol.
 
-<a href="https://w3playground.netlify.app/">
-![Demo](https://img.shields.io/badge/-Live_Demo-4E4E4E?style=for-the-badge&logo=netlify)
+<a href="https://w3playground.netlify.app/">![Demo](https://img.shields.io/badge/-Live_Demo-4E4E4E?style=for-the-badge&logo=netlify)
 </a>
 
 ## Notes
