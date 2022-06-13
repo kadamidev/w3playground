@@ -84,8 +84,6 @@ const MintNFT: React.FC<Props> = ({
     setOpened(true)
   }, [])
 
-  console.log("loaded: ", firstLoaded)
-
   const clipboard = useClipboard({ timeout: 500 })
 
   async function handleMint() {

@@ -46,16 +46,13 @@ const SliderNFT: React.FC<Props> = ({
   const falseShowSlider = showSlider === false
 
   useEffect(() => {
-    console.log("new mint, resetting preloaded and finished arr")
     setPreloaded(false)
     setFinishedArr([])
-    console.log("false show slider ran")
   }, [falseShowSlider])
 
   useEffect(() => {
     console.table(currentMint)
     if (currentMint.length && !preloaded) {
-      console.log("preload triggered")
       setPreloaded(true)
       const img: HTMLImageElement = new Image()
       img.src = `${ipfs_gateways[0]}${currentMint[0].uri}`
@@ -65,7 +62,6 @@ const SliderNFT: React.FC<Props> = ({
       }
       if (currentMint.length > 1) {
         for (let i = 1; i < currentMint.length; i++) {
-          console.log("calling preload on img: ", i)
           preload(i)
         }
       }
@@ -73,20 +69,16 @@ const SliderNFT: React.FC<Props> = ({
   }, [currentMint])
 
   async function preload(index: number) {
-    console.log("hit preload")
     const img: HTMLImageElement = new Image()
     img.src = `${ipfs_gateways[0]}${currentMint[index].uri}`
 
     img.onload = async () => {
-      console.log("index:", index, "loaded, setting to loaded")
       setFinishedArr([index, ...finishedArr])
     }
   }
 
   useEffect(() => {
-    console.log("finished Arr", finishedArr)
     const lastLoaded = finishedArr[0]
-    console.log("lastLoaded: ", lastLoaded)
     setCurrentMint(
       currentMint.map((item, idx) =>
         idx === lastLoaded ? { ...item, loaded: true } : item
