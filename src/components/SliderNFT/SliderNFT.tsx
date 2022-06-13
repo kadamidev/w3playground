@@ -8,7 +8,6 @@ import { useMediaQuery } from "@mantine/hooks"
 import { CurrentMintI } from "../MintNFT/MintNFT"
 
 const ipfs_gateways = [
-  "https://ipfs.cf-ipfs.com/ipfs/",
   "https://cloudflare-ipfs.com/ipfs/",
   "https://cf-ipfs.com/ipfs/",
   "https://ipfs.infura.io/ipfs/",
@@ -16,6 +15,7 @@ const ipfs_gateways = [
   "https://crustwebsites.net/ipfs/",
   "https://ipfs.fleek.co/ipfs/",
   "https://dweb.link/ipfs/",
+  // "https://ipfs.cf-ipfs.com/ipfs/",
 ]
 
 interface Props {
